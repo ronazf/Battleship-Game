@@ -1,4 +1,4 @@
-#January 6, 2020
+#January 7, 2020
 #This game has a 14 by 14 matrix where 6 ships with the dimesnsions listed below can be put on the matrix. Then each player plays against the computer to hit all the ships that are on their opponent's matrix. The one who hits all ships first, wins the game.
 import random #random imported for further use in the code
 n_tracker={} #This dictionary keeps track of each player and the results of each game played by that player
@@ -7,66 +7,66 @@ n_tracker={} #This dictionary keeps track of each player and the results of each
 def ship_maker():
     a=[] #list of the ships
     b=1 #current ship number
-    while b<=6: 
-        a.append([ ["x" , "x1"] , ["y" , "y1"] ]) 
-        b+=1 
-    return a 
+    while b<=6: #while the ship number is 6 or less than 6
+        a.append([ ["x" , "x1"] , ["y" , "y1"] ]) #adds a list containing two lists of x and y coordinates to the ship list
+        b+=1 #after adding the coordinations adds 1 to the ship number to go to the next ship
+    return a #returns the list of ships
 #This function helps the computer in choosing which direction it wants to take when choosing where on the matrix to put its ships 
 def computer_direction_check(a,b):
-    if b!=1: 
-        c=random.randint(1,2) 
-        if c==1: 
-            if a+(b-1)<=13: 
-                d=a+(b-1) 
-            if a-(b-1)>=0 and a+(b-1)>13: 
-                d=a-(b-1) 
-        if c==2:
-            if a-(b-1)>=0: 
-                d=a-(b-1) 
-            if a+(b-1)<=13 and a-(b-1)<0: 
-                d=a+(b-1) 
-        if a+(b-1)>13 and a-(b-1)<0:  
+    if b!=1: #if the space the ship takes is not 1 in a chosen direction
+        c=random.randint(1,2) #randomly chooses positive or negative(1=positive 2=negative)
+        if c==1: #if the random number picked is 1 
+            if a+(b-1)<=13: #if adding the space the ship takes(1 is subtracted from it since one space is already taken in the starting point) to the starting points results in a number less than or equal to 13
+                d=a+(b-1) #the points are added and the ships lasting point is produced
+            if a-(b-1)>=0 and a+(b-1)>13: #if in any case the random number picked was one but adding the spaces would result in a number bigger than 13, while subtracting the same number would result in a number equal to or greater than zero  
+                d=a-(b-1) #the points are subtracted from the starting point and as a result the ending coorninate of the ship is produced
+        if c==2: #if the random number picked is 2
+            if a-(b-1)>=0: #if subtracting the space the ship takes(1 is subtracted from it since one space is already taken in the starting point) to the starting points results in a number greater than or equal to zero
+                d=a-(b-1) #the points are subtracted and the ships lasting point is produced
+            if a+(b-1)<=13 and a-(b-1)<0: #if in any case the random number picked was two but adding the same number would result in a number less than zero, while subtracting the spaces would result in a number bigger than zero
+                d=a+(b-1) #the points are added and the ships lasting point is produced
+        if a+(b-1)>13 and a-(b-1)<0: #an error will rise if the number produced in the addition of the points is bigger than 13 and the number produced in the subtraction of the points is less than zero 
             raise Exception
-    if b==1: 
-        d=a 
-    return d 
+    if b==1: #if the chosen direction will result in the ship only taking one space in that direction, then the end and beginning of x or y is the same as the start one 
+        d=a #the ending is the same as the beginning in a certain direction(x or y)
+    return d #results are returned
 #this function helps the computer have anawareness of which points it has chosen and which points are left on the matrix and can be chosen for ships to be placed in
 def computer_list_maker(i,i2,j,j2,a): 
     c=max(j,j2) #maximum y coordinate number
     d=min(j,j2) #minimum y coordinate number
     e=max(i,i2) #maximum x coordinate number
     f=min(i,i2) #minimum x coordinate number
-    while d<=c: 
-        while f<=e:  
-            a[d].remove(f) 
-            f+=1
-        f=min(i,i2) 
-        d+=1   
-    return a 
+    while d<=c: #while the min y coordinate number is equal or less than the max y coordinate number
+        while f<=e: #while the min x coordinate number is equal or less than the max x coordinate number 
+            a[d].remove(f) #deletes the length of the ship on the matrix at the chosen part(from bottom to top)
+            f+=1 #adds 1 to the min x coordinate number with each space removed
+        f=min(i,i2) #after the min x coordinate number has enough 1s added to it that it becomes bigger than the max x coordinate number, min x is set back to its original number
+        d+=1 #each time the min x coordinate number has enough 1s added to it that it becomes bigger than the max x coordinate number, one is added to the min y coordinate number    
+    return a #the resulting list is returned with having the ship spaces removed from it
 #This function checks to see if the place of the ship that is chosen by the computer is already taken or not and if it is taken, gives an error in order to have the computer choose another spot 
 def empty_list_checker(i,i2,j,j2,a): 
     c=max(i,i2) #maximum x coordinate number
     d=min(i,i2) #minimum x coordinate number
     e=max(j,j2) #maximum y coordinate number
     f=min(j,j2) #minimun y coordinate number
-    while f<=e: 
-        while d<=c:
-            if d in a[f]: 
-                d+=1
-            else: 
+    while f<=e: #while the min y coordinate number is equal or less than the max y coordinate number
+        while d<=c: #while the min x coordinate number is equal or less than the max x coordinate number
+            if d in a[f]: #if the number of d is in the f list in the a list, then the program won't raise an error
+                d+=1 #1 is added to the value of d each time the statement above is checked
+            else: #an exception is raised if the statement above turns out to be false
                 raise Exception
-        f+=1 
-        d=min(i,i2) 
+        f+=1 #1 is added to the value of f every time the d value number exceeds the c value number
+        d=min(i,i2) #the value of d is reduced to the number of minimum x coordinate number
 #This function determines the second x or y using the first x or y and the direction the player has chosen   
 def distance_calculation(a,b,c): 
-    e=a-1 
-    if c=="left" or c=="up": 
-        if b-e>=1: 
-            d=b-e 
-    if c=="right" or c=="down": 
-        if e+b<=14: 
-            d=b+e 
-    return d 
+    e=a-1 #1 is subtracted from the space the ship takes since one space is already taken by the starting point of the ship 
+    if c=="left" or c=="up": #if the user's answer is left or up
+        if b-e>=1: #if subtracting the ship's length from the chosen coordinate number will result in an answer bigger than 1 
+            d=b-e #the result is generated by subtracting the ship's length from the starting point number
+    if c=="right" or c=="down": #if the user's answer is down or right
+        if e+b<=14: #if adding the ship's length to the chosen coordinate number will result in an answer less than 14
+            d=b+e #the result is generated by adding the ship's length to the starting point number
+    return d #the results are returned
 #This function checks every ship's coordinates in order to make sure each ship is seperated from the other, and that two or more ships don't have any coordinates in common
 def final_list_maker(i,i2,j,j2,a): 
     n=[] #n is the empty list that is used for checking if any of the spaces are already taken or not
@@ -74,58 +74,60 @@ def final_list_maker(i,i2,j,j2,a):
     d=min(j,j2) #minimum number of y coordinate
     e=max(i,i2) #maximum number of x coordinate
     f=min(i,i2) #minimum number of x coordinate
-    while d<=c: 
-        if "X" not in a[d-1][f-1:e]: 
-            n.append("O") 
-            d+=1 
+    #first, the n list fills in with the matrix's symbol ("x" for ship and "o" for empty space)
+    while d<=c: #while the minimum y coordinate number is less than or equal to the maximum y coordinate number
+        if "X" not in a[d-1][f-1:e]: #if there are no xs throughout the length of the ship in a certain y coordinate
+            n.append("O") #"o" is added to the n list
+            d+=1 #1 is added to the min y coordinate number 
         #if any x is found in the spot that the next ship is going, an error is given in order to have the player choose another spot
-        else:
+        else: #error is raised if there is an "x" throughout the length of the ship in a certain y coordinate
            raise Exception
-    if "X" not in n: 
-        d=min(j,j2) 
-        while d<=c: 
-            a[d-1][f-1:e]=["X"]*(e-(f-1)) 
-            d+=1            
-    return a 
+    #if the computer finds no xs on the matrix where the coordinates of the next ship are, then it is going to replace the os with xs
+    if "X" not in n: #if there are no xs in the n list(this is impossible since only o is added to the n list therefore, this line only makes it easier to understand the different parts of the function and is not necessary)
+        d=min(j,j2) #the value of d will return to the minimum number of y coordinate
+        while d<=c: #while the minimum y coordinate number is less than or equal to the maximum y coordinate number
+            a[d-1][f-1:e]=["X"]*(e-(f-1)) #the length of the ship in a certain y coordinate has xs replace the os
+            d+=1 #1 is added to the min y coordinate number           
+    return a #the list that contains the ship coordinate as xs in it, is returned
 
 #for simplicity of the game for tha player, this function prints out the matrix in a manner that is easier to understand and follow        
 def final_list_printer(a):
-    c=0 
-    while c<=13: 
-        print(" ".join(a[c])) 
-        c+=1 
+    c=0 #list index is set equal to zero
+    while c<=13: #efore the list index is bigger than zero
+        print(" ".join(a[c])) #brackets and commas are removed from the list and each list in the list is printed one after another (each on seperate lines)
+        c+=1 #1 is added to the list index with each list being printed
 #this function simply makes the matrix where the changes are applied and stored
 #each matrix is a list with 14 lists inside each containing 14 elements (the original matrix only has "o"s in it and later on the ships are added as "x"s (os are replaced with xs)
 def matrix_maker():
-    a=[] 
-    Os=0 
-    while Os<=13: 
-        a.append(["O"]*14) 
-        Os+=1 
-    return a 
-#This function allows for the matrix that is number based meaning, it has 14 lists inside a list, each with numbers 0 to 13. (numbers instead of os so that it is easier for the computer to understand) 
+    a=[] #empty list
+    Os=0 #index is zero(number of list within the list is equal to 1)
+    while Os<=13: #index is equal or less than 13(before the number of lists within the list is 14)
+        a.append(["O"]*14) #each list within a list gets 14 os added to it
+        Os+=1 #1 is added to the index number(the number of lists within the list) 
+    return a #the new updated list is returned
+#this function allows for the matrix that is number based meaning, it has 14 lists inside a list, each with numbers 0 to 13. (numbers instead of os so that it is easier for the computer to understand) 
 def number_based_matrix():
-    cn=0 
-    rn=0 
-    numbermatrix=[[]] 
-    while rn<=13: 
-        while cn<14: 
-            numbermatrix[rn].append(cn) 
-            cn+=1
-        if cn==14: 
-            cn=0 
-            rn+=1 
-            if rn!=14: 
-                numbermatrix.append([]) 
-    return numbermatrix 
-#This function determines the coordinates that it is going to hit on the player's matrix using the first coordinate and numbers 1 or 2 to see if 1 is added or substracted from the chosen coordinate. 
+    cn=0 #column number
+    rn=0 #row number
+    numbermatrix=[[]] #the number based matrix has 1 empty list inside a list
+    while rn<=13: #while the row number is equal or less than 13
+        while cn<14: #while the column number is less than 14
+            numbermatrix[rn].append(cn) #the column number is added to a list in number matrix with the index of the row number
+            cn+=1 #1 is added to the column number
+        if cn==14: #if the column number is equal to 14
+            cn=0 #column number is equaled to zero
+            rn+=1 #1 is added to the row number
+            if rn!=14: #if the row number isn't 14
+                numbermatrix.append([]) #an empty list is added to the number matrix
+    return numbermatrix #the number matrix list is returned
+#this function determines the coordinates that it is going to hit on the player's matrix using the first coordinate and numbers 1 or 2 to see if 1 is added or substracted from the chosen coordinate. 
 def hit_direction_check(a,c):
-    if c==1 or c==4: 
-        d=a+1 
-    if c==2 or c==3: 
-        d=a-1 
-    return d 
-n=str(input("What is your name?")) 
+    if c==1 or c==4: #if the c number's value is equal to 1 or 4 
+        d=a+1 #the resulting number is generated by adding 1 to the a number's value
+    if c==2 or c==3: #if the c number's value is equal to 2 or 3 
+        d=a-1 #the resulting number is generated by subtracting 1 from the a number's value
+    return d #resulting value is returned
+n=str(input("What is your name?")) #This input simply asks for the name of the player
 n_tracker[n]=[] #a list is made so that the points of each game the user plays is added to this list
 game="nq" #game is in not quited state
 while game!="q": #while the game is not in the quited state
@@ -446,10 +448,6 @@ while game!="q": #while the game is not in the quited state
                     print("Thank You For Playing")
                     print("Your scores were as fallows: " + n_tracker[n])
                     game="q"
-
-
-
-
         
         
             
